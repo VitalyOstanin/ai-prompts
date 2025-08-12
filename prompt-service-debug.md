@@ -107,22 +107,22 @@ curl -X GET 'http://localhost:5000/api/v2/portfolios/yield/6306ae66-c541d6b0-f4d
   -H 'accept: */*' \
   -s
 
-# Тест с авторизацией (актуальные cookie)
+# Тест с авторизацией (подставьте актуальные cookie из браузера; значения ниже — пример)
 curl -X GET 'http://localhost:5000/api/v2/portfolios/yield/6306ae66-c541d6b0-f4dc2172' \
   -H 'accept: */*' \
-  -H 'cookie: _bdk_token=d5fd87e8194edf3894d93d54795be486bea99177644240a348ff458bfbc88dbec9b13994f5c9a5b7138b86611d5fa10884865014990f9c9c328d93cdaa630ab3; _bdk_session_id=6620fc23-570135a8-69fb8e77; _bdk_id=641695e9-7fc046c1-7994d92b' \
+  -H 'cookie: _bdk_token=<YOUR_TOKEN>; _bdk_session_id=<YOUR_SESSION_ID>; _bdk_id=<YOUR_DEVICE_ID>' \
   -s
 
-# Тест с фильтрацией по датам
+# Тест с фильтрацией по датам (подставьте актуальные cookie)
 curl -X GET 'http://localhost:5000/api/v2/portfolios/yield/6306ae66-c541d6b0-f4dc2172?startDate=2025-07-01&endDate=2025-07-15' \
   -H 'accept: */*' \
-  -H 'cookie: _bdk_token=d5fd87e8194edf3894d93d54795be486bea99177644240a348ff458bfbc88dbec9b13994f5c9a5b7138b86611d5fa10884865014990f9c9c328d93cdaa630ab3; _bdk_session_id=6620fc23-570135a8-69fb8e77; _bdk_id=641695e9-7fc046c1-7994d92b' \
+  -H 'cookie: _bdk_token=<YOUR_TOKEN>; _bdk_session_id=<YOUR_SESSION_ID>; _bdk_id=<YOUR_DEVICE_ID>' \
   -s
 
-# Тест несуществующего портфеля (должен вернуть пустой массив [])
+# Тест несуществующего портфеля (должен вернуть пустой массив []) — подставьте актуальные cookie
 curl -X GET 'http://localhost:5000/api/v2/portfolios/yield/nonexistent-portfolio-id' \
   -H 'accept: */*' \
-  -H 'cookie: _bdk_token=d5fd87e8194edf3894d93d54795be486bea99177644240a348ff458bfbc88dbec9b13994f5c9a5b7138b86611d5fa10884865014990f9c9c328d93cdaa630ab3; _bdk_session_id=6620fc23-570135a8-69fb8e77; _bdk_id=641695e9-7fc046c1-7994d92b' \
+  -H 'cookie: _bdk_token=<YOUR_TOKEN>; _bdk_session_id=<YOUR_SESSION_ID>; _bdk_id=<YOUR_DEVICE_ID>' \
   -s
 ```
 
