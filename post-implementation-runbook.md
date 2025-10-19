@@ -5,16 +5,17 @@
 ## Stage Deploy Monitoring
 
 Что отслеживать
-- Успешное завершение джоб `build stage` и `deploy stage` в последнем pipeline ветки `stage`.
+- Успешное завершение джоб `build stage` и `deploy stage` в последнем pipeline, связанном с текущей фича‑веткой (pipeline для merge‑коммита в `stage`).
 - Итоговый статус pipeline = `success`.
 
 Как проверять (пример цикла каждые 30 сек, до 15 минут)
-1) Получить последний pipeline для `stage` и его `id`/`webUrl`.
-2) Проверять статус джоб:
+1) Найти Merge Request вашей фича‑ветки → `stage` (последний, в состоянии merged) и взять его merge‑commit `SHA`.
+2) Найти pipeline по этому `SHA` (или последний pipeline ветки `stage` с данным `SHA`) и его `id`/`webUrl`.
+3) Проверять статус джоб:
    - `build stage` → должен стать `success`;
    - `deploy stage` → должен перейти в `pending/running`, затем `success`.
-3) Критерий готовности: обе джобы `success`, pipeline `success`.
-4) Для отчёта сохранить ссылки:
+4) Критерий готовности: обе джобы `success`, pipeline `success`.
+5) Для отчёта сохранить ссылки:
    - Pipeline URL, Deploy Job URL.
 
 Пример формулировки статуса
@@ -52,4 +53,3 @@ BC‑XXXX: <краткое описание> (выложено на stage)
 
 Статус задачи
 - После успешного деплоя на stage перевести задачу в `Ready for Test`.
-
