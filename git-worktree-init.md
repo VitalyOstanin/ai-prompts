@@ -89,3 +89,81 @@ TASK_SLUG: BC-9999-hotfix-payments
 client-api → release/BC-9999-hotfix-payments (origin/master), каталог BC-9999-hotfix-payments
 core-libs → release/BC-9999-hotfix-payments (origin/master), каталог BC-9999-hotfix-payments
 ```
+
+## Bash скрипт для перехода в git worktree 'stage'
+
+```bash
+#!/bin/bash
+
+# Функция для переключения в git worktree 'stage'
+switch_to_stage_worktree() {
+    local project_root=$1
+    local project_name=$2
+
+    echo "Обработка проекта: $project_name"
+    echo "Корневой каталог: $project_root"
+
+    # Проверяем, является ли каталог корректным git-репозиторием
+    if [ ! -d "$project_root/.git" ] && [ ! -f "$project_root/.git" ]; then
+        echo "Ошибка: $project_root не является git-репозиторием"
+        return 1
+    fi
+
+    cd "$project_root" || return 1
+    
+    # Проверяем, существует ли уже worktree 'stage'
+    if [ -d "stage" ]; then
+        echo "Worktree 'stage' уже существует, переключаемся в него"
+        cd stage || return 1
+    else
+        echo "Worktree 'stage' не найден, проверяем наличие ветки 'stage'"
+        
+        # Проверяем наличие ветки 'stage' локально и удалённо
+        local has_stage_branch=0
+        if git branch --list | grep -q "^stage$"; then
+            has_stage_branch=1
+        elif git branch -r | grep -q "origin/stage$"; then
+            has_stage_branch=1
+        fi
+        
+        if [ $has_stage_branch -eq 1 ]; then
+            echo "Ветка 'stage' существует, создаём worktree"
+            git worktree add -b stage ../stage origin/stage || return 1
+            cd ../stage || return 1
+        else
+            echo "Ветка 'stage' не существует ни локально, ни на удалённом репозитории"
+            echo "Создаём ветку 'stage' из 'master'"
+            git fetch origin || return 1
+            git worktree add -b stage ../stage origin/master || return 1
+            cd ../stage || return 1
+        fi
+    fi
+    
+    # Обновляем ветку stage
+    git fetch origin
+    git reset --hard origin/stage
+    
+    echo "Успешно переключились в worktree 'stage' для $project_name"
+    echo "Текущий каталог: $(pwd)"
+    
+    # Дальнейшие инструкции по установке пакетов и другим действиям остаются без изменений
+    if [ -f "package.json" ]; then
+        echo "Найден package.json, выполняем npm install"
+        npm install
+    fi
+}
+
+# Основная логика скрипта
+PROJECT_ROOTS=(
+    "$HOME/devel/bitkogan/code/client-api"
+    "$HOME/devel/bitkogan/code/core-libs"
+)
+
+for project_root in "${PROJECT_ROOTS[@]}"; do
+    project_name=$(basename "$project_root")
+    switch_to_stage_worktree "$project_root" "$project_name"
+    echo
+done
+```
+
+Каталоги `client-api` и `core-libs` - это не git репо, это корень для подкаталогов с git worktree.
